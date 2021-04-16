@@ -3,7 +3,7 @@ Contributors: casepress
 Donate link: https://wpcraft.ru/product/wooms-extra/
 Tags: moysklad, woocommerce, sync, integration
 Requires at least: 4.0
-Tested up to: 5.3
+Tested up to: 5.7
 Stable tag: 4.3
 Requires PHP: 5.6
 License: GPLv2 or later
@@ -91,6 +91,9 @@ PHP 5.6
 = 8.1 =
 - Краткое описание товара вместо полного как опция https://github.com/wpcraft-ru/wooms/issues/347
 - XT: При создании нового контрагента - нет email https://github.com/wpcraft-ru/wooms/issues/346
+* Тест плагинов с новыми версиями WordPress и WooCommerce https://github.com/wpcraft-ru/wooms/issues/396
+* [XT] Публикация решения для отображения остатков со множества складов через ACF https://github.com/wpcraft-ru/wooms/issues/327
+* [XT] Публикация решения для передачи склада в заказе через методы доставки https://github.com/wpcraft-ru/wooms/issues/327
 
 = 8.0 =
 - Добавлена ссылка на услугу сопровождения магазинов
