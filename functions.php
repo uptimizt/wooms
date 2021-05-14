@@ -139,3 +139,95 @@ if (!function_exists('is_woocommerce_activated')) {
     }
   }
 }
+
+/**
+ * Checking if wooms meta is unique and deleting if it is duplicated in save_post action
+ * 
+ * @param int     $post_ID Post ID.
+ * @param WP_Post $post    Post object.
+ * @param bool    $update  Whether this is an existing post being updated.
+ * 
+ * @return void
+ * 
+ * @link https://github.com/wpcraft-ru/wooms/issues/409
+ */
+function wooms_id_check_if_unique($post_ID, $post = '', $update = '') {
+
+    if (!$post_ID || !is_numeric($post_ID)) {
+        return;
+    }
+
+    $uuid = get_post_meta($post_ID, 'wooms_id', true);
+
+    if (!$uuid) {
+        return;
+    }
+
+    $basic_args = array(
+        'post_type'              => array('product', 'product_variation'),
+        'numberposts'            => -1,
+        'post_status'            => 'any',
+        'orderby'                => 'ID',
+        'order'                  => 'ASC',
+        'update_post_term_cache' => false,
+        'update_post_meta_cache' => false,
+        'cache_results'          => false,
+    );
+
+    $products_args = array(
+        'meta_key'   => 'wooms_id',
+        'meta_value' => $uuid
+    );
+
+    $args = array_merge($basic_args, $products_args);
+
+    $products = get_posts($args);
+
+    $ids = [];
+
+    if (count($products) > 1) {
+
+        foreach ($products as $key => $product) {
+
+            if ($key > 0) {
+
+                $ids[] = $product->ID;
+            }
+        }
+    }
+
+    if (empty($ids)) {
+        return;
+    }
+    
+    /* Selecting all child variations */
+    $variations_args = array(
+        'post_parent__in' => $ids,
+    );
+
+    $args = array_merge($basic_args, $variations_args);
+
+    $variations = get_posts($args);
+
+    foreach ($variations as $variation) {
+
+        $ids[] = $variation->ID;
+    }
+
+    foreach ($ids as $id) {
+
+        $meta_values = get_post_meta( $id );
+
+        foreach ($meta_values as $key => $values) {
+            if (preg_match('/^wooms_/',  $key)) {
+                delete_post_meta($id, $key);
+            }
+        }
+    }
+
+    do_action(
+        'wooms_logger',
+        $type = 'WooMS-Request',
+        $title =  sprintf('Дубли meta-полей wooms для товаров и вариаций (%s) удалены', implode(', ', $ids))
+    );
+}

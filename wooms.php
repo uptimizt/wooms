@@ -129,6 +129,8 @@ class WooMS_Core
     });
 
     add_action('init', [__CLASS__, 'delete_old_schedules']);
+
+	add_action('save_post', 'wooms_id_check_if_unique', 10, 3);
   }
 
 
@@ -295,7 +297,6 @@ class WooMS_Core
       as_unschedule_all_actions('wooms_product_single_update', [], 'ProductWalker');
     }
   }
-
 }
 
 WooMS_Core::init();
