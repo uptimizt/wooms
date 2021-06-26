@@ -70,6 +70,8 @@ class ProductsWalker
 
     self::add_setting_wooms_batch_size();
     self::add_setting_short_description();
+
+	do_action('wooms_add_settings');
   }
 
 
